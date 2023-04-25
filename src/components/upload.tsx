@@ -48,9 +48,11 @@ const Uploader = ({ openAIKey, notionToken, notionPage }: UploaderProps) => {
         <div className="flex max-w-sm flex-col items-center gap-4 p-4">
           <p className="text-center text-white">{transcription}</p>
           {error ? (
-            <p className="text-red font-semibold">{error}</p>
+            <p className="text-red text-center font-semibold">{error}</p>
           ) : uploaded ? (
-            <p className="font-semibold text-white">Added to Notion!</p>
+            <p className="text-center font-semibold text-white">
+              Added to Notion!
+            </p>
           ) : (
             <div className="loading-animation">
               <div />

@@ -7,7 +7,7 @@ type AudioRecorderProps = {
 const AudioRecorder = ({ onAudioRecorded }: AudioRecorderProps) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
+  const [chunks, setChunks] = useState<Blob[]>([]);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   function handleStartRecording() {
@@ -24,7 +24,7 @@ const AudioRecorder = ({ onAudioRecorded }: AudioRecorderProps) => {
             "dataavailable",
             handleDataAvailable
           );
-          mediaRecorderRef.current.start();
+          mediaRecorderRef.current.start(1000);
         })
         .catch((err) => {
           console.error("Failed to get user media", err);
@@ -41,28 +41,25 @@ const AudioRecorder = ({ onAudioRecorded }: AudioRecorderProps) => {
   };
 
   function handleDataAvailable({ data }: BlobEvent) {
-    // setRecordedAudio(
-    //   new Blob([data], { type: mediaRecorderRef.current?.mimeType })
-    // );
-    onAudioRecorded(
-      new Blob([data], { type: mediaRecorderRef.current?.mimeType })
-    );
-    mediaRecorderRef.current = null;
+    if (mediaRecorderRef.current?.state === "inactive") {
+      onAudioRecorded(
+        new Blob([...chunks, data], {
+          type: mediaRecorderRef.current?.mimeType,
+        })
+      );
+      mediaRecorderRef.current = null;
+    }
+    setChunks((chunks) => [...chunks, data]);
   }
 
   return (
     <div className="flex max-w-xs flex-col items-center gap-4 p-4 text-white">
       {isLoading ? (
-        <div className="flex flex-col gap-4">
-          <div className="loading-animation">
-            <div />
-            <div />
-            <div />
-            <div />
-          </div>
-          {recordedAudio && (
-            <audio src={URL.createObjectURL(recordedAudio)} controls />
-          )}
+        <div className="loading-animation">
+          <div />
+          <div />
+          <div />
+          <div />
         </div>
       ) : isRecording ? (
         <div className="flex flex-col items-center gap-4">

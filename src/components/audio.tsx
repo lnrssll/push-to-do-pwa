@@ -9,7 +9,6 @@ const AudioRecorder = ({ onAudioRecorded }: AudioRecorderProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [chunks, setChunks] = useState<Blob[]>([]);
   const [ready, setReady] = useState(false);
-  const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   function handleStartRecording() {
@@ -39,20 +38,14 @@ const AudioRecorder = ({ onAudioRecorded }: AudioRecorderProps) => {
   const handleStopRecording = () => {
     setIsLoading(true);
     setIsRecording(false);
-    console.log("stopped");
     mediaRecorderRef.current?.stop();
-
-    // onAudioRecorded(audioBlob);
-    // setChunks([]);
   };
 
   useEffect(() => {
     if (ready) {
-      console.log(chunks.length);
       const audioBlob = new Blob(chunks, {
         type: mediaRecorderRef.current?.mimeType,
       });
-      setRecordedAudio(audioBlob);
       onAudioRecorded(audioBlob);
       setChunks([]);
       setReady(false);
@@ -60,7 +53,6 @@ const AudioRecorder = ({ onAudioRecorded }: AudioRecorderProps) => {
   }, [chunks, ready]);
 
   function handleDataAvailable({ data }: BlobEvent) {
-    console.log("new chunk");
     setChunks((chunks) => [...chunks, data]);
     if (mediaRecorderRef.current?.state === "inactive") {
       setReady(true);
@@ -70,16 +62,11 @@ const AudioRecorder = ({ onAudioRecorded }: AudioRecorderProps) => {
   return (
     <div className="flex max-w-xs flex-col items-center gap-4 p-4 text-white">
       {isLoading ? (
-        <div className="flex flex-col">
-          <div className="loading-animation">
-            <div />
-            <div />
-            <div />
-            <div />
-          </div>
-          {recordedAudio && (
-            <audio src={URL.createObjectURL(recordedAudio)} controls />
-          )}
+        <div className="loading-animation">
+          <div />
+          <div />
+          <div />
+          <div />
         </div>
       ) : isRecording ? (
         <div className="flex flex-col items-center gap-4">

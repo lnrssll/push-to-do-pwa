@@ -41,12 +41,12 @@ const AudioRecorder = ({ onAudioRecorded }: AudioRecorderProps) => {
   };
 
   function handleDataAvailable({ data }: BlobEvent) {
-    setRecordedAudio(
-      new Blob([data], { type: mediaRecorderRef.current?.mimeType })
-    );
-    // onAudioRecorded(
+    // setRecordedAudio(
     //   new Blob([data], { type: mediaRecorderRef.current?.mimeType })
     // );
+    onAudioRecorded(
+      new Blob([data], { type: mediaRecorderRef.current?.mimeType })
+    );
     mediaRecorderRef.current = null;
   }
 

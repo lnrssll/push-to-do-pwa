@@ -48,8 +48,9 @@ export const OpenAIConfig = ({ onSubmit }: OpenAIConfigProps) => {
 };
 
 export const transcribeAudio = async (apiKey: string, file: Blob) => {
+  console.log(file.type);
   const formData = new FormData();
-  formData.append("file", file, "audio.mp3");
+  formData.append("file", file, "audio.mp4");
   formData.append("model", "whisper-1");
 
   try {

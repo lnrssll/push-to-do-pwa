@@ -14,16 +14,34 @@ const AudioRecorder = ({ onAudioRecorded }: AudioRecorderProps) => {
       navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then((stream) => {
-          const mimeType = MediaRecorder.isTypeSupported("audio/webm")
-            ? "audio/webm"
-            : "video/mp4";
-          mediaRecorderRef.current = new MediaRecorder(stream, { mimeType });
-          setIsRecording(true);
-          mediaRecorderRef.current.addEventListener(
-            "dataavailable",
-            handleDataAvailable
-          );
-          mediaRecorderRef.current.start();
+          try {
+            const mimeType = MediaRecorder.isTypeSupported("audio/webm")
+              ? "audio/webm"
+              : "video/mp4";
+            mediaRecorderRef.current = new MediaRecorder(stream, { mimeType });
+            setIsRecording(true);
+            mediaRecorderRef.current.addEventListener(
+              "dataavailable",
+              handleDataAvailable
+            );
+            mediaRecorderRef.current.start();
+          } catch (err) {
+            try {
+              const mimeType = "video/mp4";
+              mediaRecorderRef.current = new MediaRecorder(stream, {
+                mimeType,
+              });
+              setIsRecording(true);
+              mediaRecorderRef.current.addEventListener(
+                "dataavailable",
+                handleDataAvailable
+              );
+              mediaRecorderRef.current.start();
+            } catch (err2) {
+              console.error(err);
+              console.error(err2);
+            }
+          }
         })
         .catch((err) => {
           console.error("Failed to get user media", err);

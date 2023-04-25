@@ -33,13 +33,12 @@ const AudioRecorder = ({ onAudioRecorded }: AudioRecorderProps) => {
   const handleStopRecording = () => {
     setIsLoading(true);
     setIsRecording(false);
-    mediaRecorderRef.current?.requestData();
     mediaRecorderRef.current?.stop();
-    mediaRecorderRef.current = null;
   };
 
   function handleDataAvailable({ data }: BlobEvent) {
     onAudioRecorded(data);
+    mediaRecorderRef.current = null;
   }
 
   return (
